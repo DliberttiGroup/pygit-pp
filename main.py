@@ -269,7 +269,7 @@ class Pygit:
             sys.exit(1)
 
         path = os.path.expanduser("~/.pygit/")
-        url = "https://github.com/thelibertti/pygit-/tree/main/DOCS/man/"
+        url = "https://github.com/DliberttiGroup/pygit-pp/tree/main/DOCS/man"
         usr_manual = "man.md"
         setup_man = "getting_started.md"
 
@@ -343,12 +343,12 @@ class Pygit:
         }
 
         branch_icon = " "
-        git_icon = "󰊢 "
+        git_icon = "󰊢"
         clean_icon = " "
         path = os.getcwd()
         name = os.path.basename(path)
 
-        print_cf(f"Information for: {git_icon}{name}", "G")
+        print_cf(f"Information for: {git_icon} {name}", "G")
         print_cf(f"Current branch: {branch_icon}{repo.active_branch}", "B")
 
         if self.is_repo_clean(repo):
@@ -685,7 +685,7 @@ class Pygit:
         dir_path = os.path.expanduser("~/.pygit/")
 
         prefix = f"cd {dir_path} && wget -q"
-        url = "https://raw.githubusercontent.com/thelibertti/pygit-/"
+        url = "https://raw.githubusercontent.com/DliberttiGroup/pygit-pp/"
         suffix = "main/DOCS/man/"
         name1 = "man.md"
         name2 = "getting_started.md"
