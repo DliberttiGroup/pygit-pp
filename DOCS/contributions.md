@@ -1,6 +1,6 @@
 # Welcome to the contributor guide of Pygit++
 
-> [NOTE!]
+> [!NOTE]
 > Please read the [Code Docs](codeDocs.md) beforehand to better 
 > understand how pygit++ code is structured and designed.
 
