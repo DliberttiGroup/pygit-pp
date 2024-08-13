@@ -19,7 +19,7 @@ function install_pygit(){
   mkdir -p build
   cd build || exit 1
 
-  wget -q https://github.com/thelibertti/pygit-/releases/download/pre-alpha-version-0.0.01/pygit++_source.zip
+  wget -q https://github.com/DliberttiGroup/pygit-pp/releases/download/pre-alpha-version-0.0.01/pygit++_source.zip
   unzip -q pygit++_source.zip
 
   python3 -m venv env > /dev/null
@@ -61,7 +61,7 @@ function uninstall_pygit() {
     rm -r $PREFIX/bin/_internal
     rm $PREFIX/bin/pygit++
   fi
-  echo "${GREEN} Pygit++ succefully uninstalled. ${NC}"
+  echo -e "${GREEN} Pygit++ succefully uninstalled. ${NC}"
 }
 
 function print_information(){

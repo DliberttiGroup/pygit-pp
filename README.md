@@ -81,7 +81,7 @@ and it will build and set up the binary for you:**
 
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/thelibertti/pygit-/main/father.sh | bash
+curl -sSL https://raw.githubusercontent.com/thelibertti/pygit-/main/father.sh | bash -s -- -I
 ```
 
 
