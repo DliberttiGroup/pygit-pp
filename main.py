@@ -352,7 +352,7 @@ class Pygit:
         print_cf(f"Current branch: {branch_icon}{repo.active_branch}", "B")
 
         if self.is_repo_clean(repo):
-            print_cf(f"Branch status: {clean_icon}Clean", "G")
+            print_cf(f"Branch status: {clean_icon} Clean", "G")
             print()
 
         else:
