@@ -3,7 +3,9 @@
 </p>
 
 > [!WARNING]
-> This program is not even in alpha; much of it is still incomplete work
+> This is work in progress still.
+> If you find a bug or have any suggestions
+> please feel free to open an issue.
 
 # PYGIT++
 **Pygit++ can be defined as simple as just as a better user
