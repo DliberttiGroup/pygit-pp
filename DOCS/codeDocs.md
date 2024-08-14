@@ -1,6 +1,5 @@
 # Welcome to the official Code Docs of pygit++
 
-
 # Section
 
 **What is a section in pygit++?**
@@ -119,6 +118,7 @@ def get_which_item_is_second(data: list[int]) -> int:
 ```
 
 
+<<<<<<< HEAD
 Try only have max 79 characters per line
 
 
