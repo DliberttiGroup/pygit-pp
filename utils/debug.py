@@ -10,7 +10,7 @@ from colorama import Fore
 from colorama import Style
 
 
-def debug(message: str, type_message: str):
+def debug(verbose: bool, message: str, type_message: str):
     """
     Usage:
     debug('foo', "I")
@@ -35,11 +35,11 @@ def debug(message: str, type_message: str):
         'E': '\033[91m[ERROR] ',
         'reset': '\033[0m'
     }
-
-    if type_message in colors:
-        print(f"{colors[type_message]}{message}{colors['reset']}")
-    else:
-        print(f"{colors['I']}{message}{colors['reset']}")
+    if verbose:
+        if type_message in colors:
+            print(f"{colors[type_message]}{message}{colors['reset']}")
+        else:
+            print(f"{colors['I']}{message}{colors['reset']}")
 
 
 def print_cf(string: str, color: str, bg_color=None):
