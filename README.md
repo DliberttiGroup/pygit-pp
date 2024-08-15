@@ -1,7 +1,3 @@
-<p align="center">
-    <img src="static/logo_pygit2.svg" width="2000" height="500"/>
-</p>
-
 > [!WARNING]
 > This is work in progress still.
 > If you find a bug or have any suggestions
