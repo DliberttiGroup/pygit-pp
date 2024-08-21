@@ -6,3 +6,4 @@ build/
 utils/__pycache__/
 debugs.py
 TODO.md
+.env
