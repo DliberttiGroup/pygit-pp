@@ -73,7 +73,7 @@ dependencies
 
 
 
-## Automatic installation (Linux only)
+## Automatic installation (Linux users)
 
 **There is a binary options for users simple
 run the following command in your terminal
@@ -98,7 +98,7 @@ dependencies in your system**
 (Note: Pygit++ will be installed in ```usr/local/bin``` or in ```$PREFIX/bin``` in 
 case you are in Termux)
 
-## Manual Compilation (Windows and Linux users)
+## Manual Compilation (Linux users)
 
 For manual compilation 
 
@@ -127,7 +127,7 @@ in `_internal/`, now you can decide where to place both the binary
 and the dependencies.
 
 
-##  For DEVS (Linux and Windows users)
+##  For DEVS (Linux users)
 
 First clone this repo:
 
@@ -146,20 +146,10 @@ pip install -r requirements.txt
 **Linux:**
 look for your shell configuration file such as '.zshrc' or '.bashrc'
 in your home directory and open it, and add the next line:
+
+
 ```bash
 alias pygit="python [path_to_the_pygit++_dir]/main.py"
-```
-
-
-**Windows**
-Run in powershell:
-```powershell
-notepad $PROFILE
-```
-
-There add the next line:
-```powershell
-Set-Alias pygit "python [path_to_the_pygit++_folder/main.py]"
 ```
 
 (Make sure to change the path to where main.py is 
