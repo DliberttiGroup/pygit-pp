@@ -1,4 +1,5 @@
 colorama
+requests
 simple-term-menu
 GitPython
 prompt_toolkit

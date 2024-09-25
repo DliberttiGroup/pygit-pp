@@ -24,6 +24,7 @@
 from utils.debug import debug
 from utils.debug import print_cf
 from utils.tools import yes_or_no_menu
+from utils.tools import multiple_selection_menu_files
 from utils.tools import multiple_selection_menu
 from utils.tools import multiple_choice_menu
 from utils.tools import miniCommitTypingApp
@@ -31,9 +32,11 @@ from utils.tools import clean_screen
 from utils.json_work import write_into_json_file
 from utils.json_work import write_new_profile
 import argparse
+import base64
 import os
 from subprocess import Popen
 import sys
+import requests
 from git import Repo
 import git
 import asyncio
@@ -97,6 +100,13 @@ class Pygit:
             nargs='*',
             help='A better way to add your work'
         )
+
+        self.parser.add_argument(
+            '-p', '--push',
+            action='store_true',
+            help='A better way to push your work'
+        )
+
         self.parser.add_argument(
             '-m', '-man',
             nargs='*',
@@ -170,6 +180,9 @@ class Pygit:
 
         if self.args.commit is not None:
             self.commit_work(self.repo, self.args.commit)
+
+        if self.args.push:
+            self.push_work(self.repo)
 
         if len(sys.argv) == 1:
             self.show_info_from_repo(self.repo)
@@ -269,7 +282,7 @@ class Pygit:
             sys.exit(1)
 
         path = os.path.expanduser("~/.pygit/")
-        url = "https://github.com/DliberttiGroup/pygit-pp/tree/main/DOCS/man"
+        url = "https://github.com/DliberttiGroup/pygit-pp/tree/main/DOCS/man/"
         usr_manual = "man.md"
         setup_man = "getting_started.md"
 
@@ -596,7 +609,7 @@ class Pygit:
                 self.display_files_added_to_index(files_to_add)
 
         if len(files_to_add) == 0:
-            index = multiple_selection_menu(files, title=title)
+            index = multiple_selection_menu_files(files, title=title)
             files_to_commit = [os.path.join(
                 os.getcwd(), files[item]) for item in index]
 
@@ -618,6 +631,142 @@ class Pygit:
     """
     End Section:
     Add files to index
+    """
+
+    """
+    Section:
+    Push
+    """
+
+    def push_work(self, repo: Repo):
+        """
+        Main Function
+        """
+        debug("Use: <Ctr-c> to cancell", "I")
+        print()
+        remotes = self.list_remotes(repo)
+        try:
+            if len(remotes) == 1:
+                self.push_one_remote(repo, remotes)
+            if len(remotes) > 1:
+                self.push_when_multiple_remotes(repo, remotes)
+
+        except KeyboardInterrupt:
+            debug("Operation cancelled by user!", "I")
+            sys.exit(0)
+
+    def push_one_remote(self, repo: Repo, remotes: dict[str, str]) -> None:
+        debug("Using only remote as default", "I")
+
+        credentials = self.get_credentials()
+        if credentials:
+            self.send_request(remotes, credentials)
+
+    def push_when_multiple_remotes(self,
+                                   repo: Repo,
+                                   remotes: dict[str, str]
+                                   ) -> None:
+
+        title = "Please select the remote you want to push to"
+        remotes_list = [item for item in remotes.keys()]
+        index = multiple_choice_menu(remotes_list, title=title)
+        remote_url = remotes[remotes_list[index]]
+        print(remote_url)
+
+    def send_request(self,
+                     commited_files: list[str],
+                     remotes: dict[str, str],
+                     crendentials: dict[str, str]) -> None:
+        """
+        Sub Function of:
+        push [one-multiple] remotes
+        """
+        name_prefix = "https://github.com/"
+        url_repo = remotes[next(iter(remotes))]
+
+        url_prefix = "https://api.github.com/repos/"
+        name = url_repo[len(name_prefix):].strip()
+        sufix = "/contents/"
+        file = "main.py"
+
+        url_request = f"{url_prefix}{name}{sufix}{file}"
+
+        response = requests.get(url_request)
+        print(response)
+
+    def format_files_to_base64(self, file: str) -> None:
+        """
+        Sub function of:
+        send_request
+        """
+
+    def get_credentials(self) -> dict[str, str]:
+        """
+        Sub function of:
+        push push one-multiple remotes
+
+        Note: this function may not return nothing
+        in case no valid credentials are found
+        """
+        email_prefix = "PYGIT_EMAIL="
+        hash_prefix = "PYGIT_HASH="
+        credentials = {}
+
+        try:
+            with open(f"{self.path}/.env", 'r') as f:
+                data = f.read().strip()
+
+            for line in data.splitlines():
+                if line.startswith(email_prefix):
+
+                    credentials["email"] = self.format_credential(
+                        line,
+                        email_prefix
+                    )
+
+                if line.startswith(hash_prefix):
+                    credentials["hash"] = self.format_credential(
+                        line,
+                        email_prefix
+                    )
+
+            if credentials:
+                return credentials
+            else:
+                debug(
+                    "No valid credential could be found in the .env file",
+                    "E"
+                )
+                debug("Push failed", "W")
+                print()
+                debug("Run pygit++ -man setup for manual", "I")
+
+        except FileNotFoundError:
+            debug(".env file couldn't be found", "E")
+            debug("Run pygit++ -man setup to see manual!", "I")
+            sys.exit(1)
+
+    def format_credential(self, line: str, prefix: str) -> str:
+        """
+        Sub function of:
+        get_credentials
+        """
+        line = line[len(prefix):].strip().replace('"', '')
+        return line
+
+    def list_remotes(self, repo: Repo) -> dict[str, str]:
+        "Sub-Function"
+
+        remotes = {}
+
+        for remote in repo.remotes:
+            remotes[remote.name] = remote.url
+
+        return remotes
+
+    """
+    End Section:
+    push
     """
 
     """

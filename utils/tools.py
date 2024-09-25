@@ -48,9 +48,9 @@ def yes_or_no_menu() -> str:
         return "N"
 
 
-def multiple_selection_menu(options: list, title="") -> list:
+def multiple_selection_menu_files(options: list, title="") -> list[int]:
     """
-    Multiple option menu that lets the user pick
+    Multiple option menu that let the user pick
     multiple options
 
     Note: this funtion will return a list with the index of the
@@ -82,6 +82,24 @@ def multiple_selection_menu(options: list, title="") -> list:
             "E")
         debug("Please add the files manually", "I")
         exit(1)
+
+    index = menu.show()
+    return index
+
+
+def multiple_selection_menu(options: list, title="") -> list[int]:
+    """
+    Implementation of the multiple selection menu
+    put this is for general data, for files use
+    multiple_selection_menu_files
+    """
+    menu = TerminalMenu(
+        options,
+        title=title,
+        menu_highlight_style=('fg_cyan', 'bg_black'),
+        multi_select=True,
+        show_multi_select_hint=True,
+    )
 
     index = menu.show()
     return index
