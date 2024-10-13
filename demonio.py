@@ -3,90 +3,95 @@
 #
 # Version: pre-v-0.0.0.01
 #
-# WARN: DO NOT USE THIS CODE.
-# WARN: THIS IS JUST A STARTING POINT OF THE FUTURE
-# IMPLEMENATATION PLEASE DO NOT USE THIS CODE
+# WARN: THIS CODE MAYBE HIGHLY UNSTABLE.
 #
 # WARN: known problems: (0)
 
-
-from utils.debug import debug
-import asyncio
+import psutil
 import subprocess
-import socket
+import os
+import sys
+from utils.debug import debug
+
+ERROR_FILE_PATH = os.path.expanduser("~/.pygit/cache/demonioApi.txt")
 
 
 class Demonio:
-    """
-    When you create an instance of this class
-    it will automaticly create the server
+    def __init__(self):
+        if len(sys.argv) == 1:
+            if not self.is_running():
+                self.demonio = self.summon()
+            else:
+                debug("Daemon already running.", "E")
+                debug("Exiting", "I")
 
-    TODO: Write docs for the api
-    """
+        if "stop" in sys.argv:
+            self.stop()
 
-    """
-    Section:
-    expose API
-    """
+        elif "reinit" in sys.argv:
+            self.restart()
 
-    def __init__(self, verbose=True):
-        self.verbose = verbose
+        elif "help" in sys.argv:
+            self.print_help()
 
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind(('127.0.0.1', 5666))
-
-        self.server.listen(5)
-        debug(self.verbose,
-              "Server running on: 127.0.0.1:5666",
-              "I"
-              )
-
-    async def start_listening(self):
-        while True:
-            client_socket, client_address = await asyncio.to_thread(
-                self.server.accept
-            )
-
-            debug(
-                self.verbose,
-                f"Connection established with {client_address}",
-                "I"
-            )
-            asyncio.create_task(self.handle_client(client_socket))
-
-    async def handle_client(self, client_socket):
+    def summon(self):
+        """ Inicia el proceso del daemon """
         try:
-            debug(
-                self.verbose,
-                "Handler client called",
-                "W"
-            )
-            while True:
-                data = await asyncio.to_thread(client_socket.recv, 1024)
-                debug(
-                    self.verbose,
-                    f"Recivied: {data}",
-                    "M"
+            with open(ERROR_FILE_PATH, 'a') as error_file:
+                process = subprocess.Popen(
+                    ["python", "API/main.py"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=error_file,
                 )
+            debug("Daemon is up and running", "I")
+            debug("Pass 'info' to see more information", "I")
+            return process
 
-                if not data:
-                    break
+        except Exception as e:
+            debug(f"Failed to start daemon: {e}", "E")
+            raise
 
-                response = f"Echo: {data.decode('utf-8')}"
+    def is_running(self):
+        pid = self.get_pid()
 
-                await asyncio.to_thread(
-                    client_socket.sendall, response.encode('utf-8')
-                )
+        if pid:
+            return True
 
-        finally:
-            client_socket.close()
-            debug(
-                self.verbose,
-                "Connection closed",
-                "I"
-            )
+        return False
+
+    def get_pid(self):
+        for proc in psutil.process_iter(['pid', 'cmdline']):
+            if 'API/main.py' in proc.info['cmdline']:
+                return proc.info['pid']
+
+    def stop(self):
+        pid = self.get_pid()
+        if pid:
+            proc = psutil.Process(pid)
+            proc.terminate()
+            proc.wait()
+            debug("Daemon stopped", "I")
+        else:
+            debug("No daemon process found to stop.", "E")
+
+    def restart(self):
+        self.stop()
+        self.demonio = self.summon()
+
+    def print_help(self):
+        """ Muestra ayuda sobre los comandos """
+        msg = """
+Demonio V-0.0.01
+
+Usage: python demonio.py <command>
+
+Available commands:
+
+stop - Stops daemon process
+restore - Restarts daemon process
+        """
+        print(msg)
 
 
 if __name__ == "__main__":
     demonio = Demonio()
-    asyncio.run(demonio.start_listening())

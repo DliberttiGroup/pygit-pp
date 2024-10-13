@@ -41,7 +41,4 @@ will have.
 
 For more information see [DOCS]()
 
-
-
-
 See 'License'

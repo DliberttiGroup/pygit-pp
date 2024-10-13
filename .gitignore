@@ -7,3 +7,4 @@ utils/__pycache__/
 debugs.py
 debug.py
 TODO.md
+.env
